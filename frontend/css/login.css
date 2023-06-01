@@ -1,0 +1,19 @@
+body {
+    padding: 30px;
+}
+
+.login-form {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 100%;
+}
+
+.login-form .btn {
+    width: 100%;
+}

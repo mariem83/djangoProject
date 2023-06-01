@@ -1,0 +1,8 @@
+Django~=4.2.1
+djangorestframework~=3.14.0
+asgiref~=3.7.2
+channels~=4.0.0
+daphne~=4.0.0
+djangorestframework-simplejwt~=5.2.2
+django-cors-headers~=4.0.0
+django-channels-jwt-auth-middleware~=1.0.0
