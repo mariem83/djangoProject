@@ -6,3 +6,4 @@ daphne~=4.0.0
 djangorestframework-simplejwt~=5.2.2
 django-cors-headers~=4.0.0
 django-channels-jwt-auth-middleware~=1.0.0
+psycopg
