@@ -63,8 +63,8 @@ CHANNEL_LAYERS = {
     }
 }
 SIMPLE_JWT = {
-  # It will work instead of the default serializer(TokenObtainPairSerializer).
-  "TOKEN_OBTAIN_SERIALIZER": "callCenter.serializers.CustomTokenObtainPairSerializer",
+    # It will work instead of the default serializer(TokenObtainPairSerializer).
+    "TOKEN_OBTAIN_SERIALIZER": "callCenter.serializers.CustomTokenObtainPairSerializer",
 }
 
 ROOT_URLCONF = 'djangoProject.urls'
@@ -93,8 +93,16 @@ WSGI_APPLICATION = 'djangoProject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'smart_farm_call_center',
+        'USER': 'nadafauser',
+        'PASSWORD': 'S@bry123',
+        'HOST': 'nadafadb.postgres.database.azure.com',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+            'sslcert': 'DigiCertGlobalRootCA.crt.pem',
+                    },
     }
 }
 
