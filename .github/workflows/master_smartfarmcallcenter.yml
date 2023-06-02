@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'SmartFarmCallCenter'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CDDDC9F513B84565AF44109D2D9B50AA }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_40E35DFC8E2C4044AAB1F02EF7C275FD }}
