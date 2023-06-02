@@ -1,7 +1,7 @@
 $(document).ready(function () {
     const token = localStorage.getItem('token'); // Retrieve token from local storage
     // WebSocket connection
-    const socket = new WebSocket('ws://localhost:8000/ws/call-center/queue?token=' + token);
+    const socket = new WebSocket('ws://smartfarmcallcenter.azurewebsites.net/ws/call-center/queue?token=' + token);
 
     socket.onopen = function () {
         console.log('WebSocket connection established.');
@@ -19,8 +19,8 @@ $(document).ready(function () {
 
 
     socket.onclose = function (){
-        //console.log('WebSocket connection closed')
-        window.history.back()
+        console.log('WebSocket connection closed')
+        //window.history.back()
     }
 
     $('#call-queue-list').on('click', '.list-group-item', function (event) {
