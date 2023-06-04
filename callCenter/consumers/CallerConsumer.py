@@ -9,6 +9,8 @@ from django.db.models import F
 from callCenter.consumers.AbstractConsumer import AbstractConsumer
 from callCenter.models import ChatRoom, Customer, ChatMessage, Worker, CallQueue
 
+WORKER_PERMISSION = "callCenter.view_customer"
+
 
 class CallerConsumer(WebsocketConsumer, AbstractConsumer):
 
@@ -20,7 +22,7 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
 
         print("authenticated customer:", self.user.username)
 
-        if "callCenter.view_caller" not in self.get_user_permissions():
+        if WORKER_PERMISSION not in self.get_user_permissions():
             self.establish_customer_connection()
         else:
             self.establish_worker_connection()
@@ -32,17 +34,18 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
         data = json.loads(text_data)
         print("received Data: ", data)
         message_type = data.get('type')
-        if message_type == 'chat_message':
-            content = data.get('content')
-            chat_message = ChatMessage(room=self.chat_room, content=content, sender_name=self.user.username)
-            self.create_chat_message(chat_message)
-            async_to_sync(self.channel_layer.group_send)(
-                self.room_group_name,
-                {
-                    'type': 'chat_message_pub',
-                    'message': self.user.username + ": " + content,
-                }
-            )
+        if message_type:
+            if message_type == 'chat_message':
+                content = data.get('content')
+                chat_message = ChatMessage(room=self.chat_room, content=content, sender_name=self.user.username)
+                self.create_chat_message(chat_message)
+                async_to_sync(self.channel_layer.group_send)(
+                    self.room_group_name,
+                    {
+                        'type': 'chat_message_pub',
+                        'message': self.user.username + ": " + content,
+                    }
+                )
 
     def disconnect(self, close_code):
         # Perform any necessary cleanup tasks when a WebSocket connection is closed
@@ -53,7 +56,7 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
                 self.room_group_name,
                 self.channel_name
             )
-        elif "callCenter.view_caller" in self.get_user_permissions() or close_code == 3013:
+        elif WORKER_PERMISSION in self.get_user_permissions() or close_code == 3013:
             self.clear_chat_history()
             self.close_call()
         elif close_code == 3012:
@@ -70,6 +73,14 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
                     self.room_group_name,
                     self.channel_name
                 )
+        self.chat_room = self.get_chat_room_by_customer()
+        if self.chat_room:
+            if not self.chat_room.worker:
+                self.clear_chat_history()
+                if self.call_queue:
+                    self.call_queue.delete()
+                    self.send_call_queue_status()
+
 
     @transaction.atomic
     def establish_customer_connection(self):
@@ -165,7 +176,7 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
 
     def add_call_to_queue(self):
         # Add the caller to the call queue
-        CallQueue.objects.create(customer=self.customer)
+        self.call_queue = CallQueue.objects.create(customer=self.customer)
 
     def get_chat_room_by_worker(self):
         try:

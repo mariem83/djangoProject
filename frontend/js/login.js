@@ -15,7 +15,7 @@ $(document).ready(function () {
         };
 
         // Send POST request to the server using Fetch API
-        fetch('https://smartfarmcallcenter.azurewebsites.net/token', {
+        fetch('http://localhost:8000/token', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -33,7 +33,7 @@ $(document).ready(function () {
                         const tokenData = parseJwt(token)
                         console.log(tokenData)
                         // Check if the token has the role "callCenter.view_caller" in its permissions list
-                        if (tokenData.permissions && tokenData.permissions.includes("callCenter.view_caller")) {
+                        if (tokenData.permissions && tokenData.permissions.includes("callCenter.view_customer")) {
                             // Redirect to the employee page
                             window.location.href = 'employee.html';
                         } else {

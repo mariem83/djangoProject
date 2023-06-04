@@ -4,13 +4,13 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
 from callCenter.consumers.AbstractConsumer import AbstractConsumer
-from callCenter.models import CallQueue, Customer
+from callCenter.models import Customer
 
-
+WORKER_PERMISSION = "callCenter.view_customer"
 class QueueConsumer(WebsocketConsumer, AbstractConsumer):
     def connect(self):
         self.user = self.scope["user"]
-        if not self.user.is_authenticated or "callCenter.view_caller" not in self.user.get_user_permissions():
+        if not self.user.is_authenticated or WORKER_PERMISSION not in self.user.get_user_permissions():
             self.close()
             return
         print("authenticated worker:", self.user.username)
