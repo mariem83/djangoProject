@@ -3,15 +3,16 @@ $(document).ready(function () {
     const room = localStorage.getItem('room');
     console.log(token)
     console.log(room)
-    const socket = new WebSocket('wss://smartfarmcallcenter.azurewebsites.net/ws/call-center/room?token=' + token + '&room=' + room);
+    const socket = new WebSocket('ws://localhost:8000/ws/call-center/room?token=' + token + '&room=' + room);
 
     socket.onopen = function () {
         console.log('WebSocket connection established.');
     };
 
-    // socket.onclose = function () {
-    //    // window.history.back()
-    // }
+    socket.onclose = function (e) {
+        console.log(e)
+       // window.history.back()
+    }
     socket.onmessage = function (event) {
         const data = JSON.parse(event.data);
         //console.log(data)
