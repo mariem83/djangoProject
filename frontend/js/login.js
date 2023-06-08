@@ -15,7 +15,7 @@ $(document).ready(function () {
         };
 
         // Send POST request to the server using Fetch API
-        fetch('http://localhost:8000/token', {
+        fetch('https://smartfarmcallcenter.azurewebsites.net/token', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
