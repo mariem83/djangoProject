@@ -9,3 +9,5 @@ django-channels-jwt-auth-middleware~=1.0.0
 psycopg
 fcm-django~=2.0.0
 redis-om~=0.1.2
+
+https://fcm.googleapis.com/fcm/send

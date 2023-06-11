@@ -13,6 +13,7 @@ from callCenter.models import ChatRoom, Customer, ChatMessage, Worker, CallQueue
 WORKER_PERMISSION = "callCenter.view_customer"
 CHAT_TTL = 5400
 
+
 class CallerConsumer(WebsocketConsumer, AbstractConsumer):
 
     def connect(self):
@@ -38,7 +39,8 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
         if message_type:
             if message_type == 'chat_message':
                 content = data.get('content')
-                chat_message = ChatMessage(room_pk=self.chat_room.pk, content=content, sender_name=self.user.username,created_at=datetime.now())
+                chat_message = ChatMessage(room_pk=self.chat_room.pk, content=content, sender_name=self.user.username,
+                                           created_at=datetime.now())
                 self.create_chat_message(chat_message)
                 async_to_sync(self.channel_layer.group_send)(
                     self.room_group_name,
@@ -65,7 +67,7 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
         elif close_code == 3012:
             self.call_queue = self.get_call_queue_by_customer()
             if self.call_queue:
-                self.call_queue.delete(pk = self.call_queue.pk)
+                self.call_queue.delete(pk=self.call_queue.pk)
                 self.send_call_queue_status()
             self.clear_chat_history()
             self.close_call()
@@ -76,15 +78,14 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
                     self.room_group_name,
                     self.channel_name
                 )
-        if self.customer :
+        if self.customer:
             self.chat_room = self.get_chat_room_by_customer()
             if self.chat_room:
                 if not Worker.get(self.chat_room.worker_pk):
                     self.clear_chat_history()
                     if self.call_queue:
-                        self.call_queue.delete(pk = self.call_queue.pk)
+                        self.call_queue.delete(pk=self.call_queue.pk)
                         self.send_call_queue_status()
-
 
     def establish_customer_connection(self):
         self.close_code = 3012
@@ -94,7 +95,7 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
             self.create_customer()
         self.chat_room = self.get_chat_room_by_customer()
         if not self.chat_room:
-            self.chat_room = ChatRoom(customer_pk=self.customer.pk,created_at=datetime.now())
+            self.chat_room = ChatRoom(customer_pk=self.customer.pk, created_at=datetime.now())
             self.create_chat_room()
             self.add_call_to_queue()
             self.send_call_queue_status()
@@ -159,14 +160,12 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
         result_list = Customer.find(Customer.user_id == self.user.id).all()
         return result_list[0] if len(result_list) > 0 else None
 
-
     def get_customer_by_customer_pk(self):
         # Check if the caller is the next in queue
         try:
             return Customer.get(self.customer_pk)
         except NotFoundError:
             return None
-
 
     def get_worker(self):
         # Check if the caller is the next in queue
@@ -179,7 +178,7 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
 
     def add_call_to_queue(self):
         # Add the caller to the call queue
-        self.call_queue = CallQueue(customer_pk=self.customer.pk,created_at=datetime.now())
+        self.call_queue = CallQueue(customer_pk=self.customer.pk, created_at=datetime.now())
         self.call_queue.save()
         self.call_queue.expire(CHAT_TTL)
 
@@ -222,18 +221,18 @@ class CallerConsumer(WebsocketConsumer, AbstractConsumer):
         return result_list[0] if len(result_list) > 0 else None
 
     def delete_call_from_queue(self):
-        self.call.delete(pk = self.call.pk)
+        self.call.delete(pk=self.call.pk)
 
     def get_chat_messages_ordered_by_timestamp(self):
         objects = ChatMessage.find(ChatMessage.room_pk == self.chat_room.pk).all()
         return objects
 
     def clear_chat_history(self):
-        if hasattr(self, 'chat_room') and self.chat_room :
-            self.chat_room.delete(pk = self.chat_room.pk)
+        if hasattr(self, 'chat_room') and self.chat_room:
+            self.chat_room.delete(pk=self.chat_room.pk)
             messages = ChatMessage.find(ChatMessage.room_pk == self.chat_room.pk).all()
             for message in messages:
-                message.delete(pk = message.pk)
+                message.delete(pk=message.pk)
 
     def close_call(self):
         if hasattr(self, 'room_group_name'):
