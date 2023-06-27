@@ -23,13 +23,15 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
-from callCenter.views import TokenView
+from callCenter.views import TokenView, HomePageView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('token', TokenView.as_view(), name='token_obtain_pair'),
     path('token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('token/verify', TokenVerifyView.as_view(), name='token_verify'),
+    path('not/push', HomePageView.as_view())
+
 ]
 
 websocket_urlpatterns = [

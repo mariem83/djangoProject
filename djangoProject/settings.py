@@ -31,7 +31,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 INSTALLED_APPS = [
-
     'daphne',
     'corsheaders',
     'callCenter',
@@ -43,8 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework_simplejwt',
-
-
 ]
 
 MIDDLEWARE = [
@@ -62,9 +59,12 @@ MIDDLEWARE = [
 ASGI_APPLICATION = "djangoProject.asgi.application"
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': "channels.layers.InMemoryChannelLayer"
-    }
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [('localhost', 6379)],
+        },
+    },
 }
 SIMPLE_JWT = {
     # It will work instead of the default serializer(TokenObtainPairSerializer).
@@ -92,7 +92,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'djangoProject.asgi.application'
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
